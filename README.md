@@ -4,6 +4,10 @@
 
 ## google sheets apps script, chatgpt generated description below
 
+## dziala_spoko-old - older version, that works without some features, disposable
+
+## warcraft_google_sheets_script - main, current version
+
 =============
 
 
