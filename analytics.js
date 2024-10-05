@@ -180,6 +180,41 @@ function outputRaceWinrates(spreadsheet, matchResults) {
   matchupOutputRange.setValues(raceMatchupWinrates);
   
   logging("Race matchup winrates written to Analytics sheet");
+
+  // Calculate player winrates
+  const playerStats = {};
+  matchResults.forEach(match => {
+    [match.player1, match.player2].forEach(player => {
+      if (!playerStats[player]) {
+        playerStats[player] = { wins: 0, games: 0 };
+      }
+      playerStats[player].games++;
+    });
+
+    if (match.player1Score > match.player2Score) {
+      playerStats[match.player1].wins++;
+    } else if (match.player2Score > match.player1Score) {
+      playerStats[match.player2].wins++;
+    }
+  });
+
+  const playerWinrates = Object.entries(playerStats).map(([player, stats]) => {
+    const winrate = stats.games > 0 ? (stats.wins / stats.games * 100).toFixed(2) : "0.00";
+    return [player, `${winrate}%`, stats.games];
+  });
+
+  // Sort playerWinrates by winrate (descending)
+  playerWinrates.sort((a, b) => parseFloat(b[1]) - parseFloat(a[1]));
+
+  // Output player winrates to analytics sheet
+  analyticsSheet.getRange("J1").setValue("Player");
+  analyticsSheet.getRange("K1").setValue("Winrate");
+  analyticsSheet.getRange("L1").setValue("Games Played");
+  
+  const playerOutputRange = analyticsSheet.getRange(2, 10, playerWinrates.length, 3);
+  playerOutputRange.setValues(playerWinrates);
+  
+  logging("Player winrates written to Analytics sheet");
 }
 
 function analyzeRaceMatchups(matchResults) {
@@ -284,8 +319,9 @@ Sheet Structure:
    - Highest Rated Player: Columns S:T
 
 2. Analytics Sheet (created by the script if not present):
-   - Race Winrates: Columns A:D (now includes average rating change)
-   - Race Matchup Winrates: Columns F:I
+   - Race Winrates: Columns A:C
+   - Race Matchup Winrates: Columns E:H
+   - Player Winrates: Columns J:L
 
 Functions:
 
@@ -335,9 +371,10 @@ Notes:
 - The highest rated player ever recorded and their rating are now stored in columns S and T of the main sheet.
 
 Output in Analytics Sheet:
-- Columns A:D: Overall race winrates, games played, and average rating changes
-- Columns F:I: Race matchup winrates
+- Columns A:C: Overall race winrates and games played
+- Columns E:H: Race matchup winrates
+- Columns J:L: Player winrates and games played
 
-This script provides comprehensive analytics for Warcraft III matches, including individual race performance, specific matchup statistics, and average rating changes for each race.
+This script provides comprehensive analytics for Warcraft III matches, including individual race performance, specific matchup statistics, and player performance statistics.
 
 */
