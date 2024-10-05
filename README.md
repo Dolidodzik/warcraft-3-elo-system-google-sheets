@@ -102,3 +102,62 @@ Notes
 This documentation should provide a comprehensive guide for anyone using the script, including how it functions and how to set it up in Google Sheets. You can easily copy this text into a .txt file for future reference. If you have any further questions or need more adjustments, feel free to ask!
 
 */
+
+# stuff for analytics:
+
+Google Sheets Warcraft III Analytics Script
+
+Overview:
+This script analyzes Warcraft III match data from a Google Sheets document, calculating race winrates and outputting the results to an "Analytics" sheet.
+
+Sheet Structure:
+1. Main Sheet (named "v1.1 (do przetestowania, ale ogolnie git)"):
+   - Initial Rankings: Columns A:B
+   - Match Results: Columns E:J
+   - Current Rankings: Columns M:N
+
+2. Analytics Sheet (created by the script if not present):
+   - Race Winrates: Columns A:B
+
+Functions:
+
+1. MAIN()
+   Entry point of the script. Reads data from the main sheet and calls other functions for analysis.
+
+2. readInitialRankings(sheet)
+   Reads initial player rankings from columns A:B.
+
+3. readMatchResults(sheet)
+   Reads match results from columns E:J, including player races based on cell background colors.
+
+4. readCurrentRankings(sheet)
+   Reads current player rankings from columns M:N.
+
+5. outputRaceWinrates(spreadsheet, matchResults)
+   Calculates and outputs race winrates to the Analytics sheet.
+
+6. getPeakRating()
+   Retrieves the peak rating from cell Q2 of the main sheet.
+
+7. logging(message)
+   Logs messages to the console if LOG_OR_NOT_ANALYTICS is true.
+
+Race Color Coding:
+The script uses the following color codes to determine player races:
+- #00ff00: Night Elf
+- #9900ff: Undead
+- #ff0000: Orc
+- #0000ff: Human
+
+How to Use:
+1. Open your Google Sheets document containing the Warcraft III match data.
+2. Go to Extensions > Apps Script.
+3. Copy and paste the script code into the Apps Script editor.
+4. Save the script with a name of your choice.
+5. Run the MAIN() function to execute the analysis.
+6. Check the newly created "Analytics" sheet for race winrate data.
+
+Notes:
+- Ensure that the main sheet is named correctly and that data is in the expected columns.
+- The script will create a new "Analytics" sheet if it doesn't exist.
+- Make sure cell background colors are set correctly for accurate race determination.

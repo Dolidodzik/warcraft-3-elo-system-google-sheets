@@ -107,6 +107,10 @@ function updateEloRatings() {
     playerRatings[player2] = Math.round(newRating2);
     logging("Updated ratings - " + player1 + ": " + playerRatings[player1] + ", " + player2 + ": " + playerRatings[player2]);
 
+    // Write the new ratings to columns K and L
+    sheet.getRange(j + 2, 11).setValue(playerRatings[player1]); // Column K
+    sheet.getRange(j + 2, 12).setValue(playerRatings[player2]); // Column L
+
     // Check if either player has achieved a new highest rating
     if (playerRatings[player1] > highestRating) {
       highestRatedPlayer = player1;
@@ -139,21 +143,21 @@ function updateEloRatings() {
   logging("Sorted output table: " + JSON.stringify(output));
 
   // Write the new table to M2:N (dynamically handles how many rows are needed)
-  var outputRange = sheet.getRange(2, 13, output.length, 2); // Start at M2 (13th column is M, N is 14th)
+  var outputRange = sheet.getRange(2, 15, output.length, 2); // Start at O2 (15th column is O, P is 16th)
   outputRange.setValues(output);
-  logging("Sorted output table written to sheet, starting at M2");
+  logging("Sorted output table written to sheet, starting at O2");
 
   // Write header at M1:N1
-  sheet.getRange("M1").setValue("Nick");
-  sheet.getRange("N1").setValue("Aktualny ranking");
-  logging("Headers written to M1 and N1");
+  sheet.getRange("O1").setValue("Nick");
+  sheet.getRange("P1").setValue("Aktualny ranking");
+  logging("Headers written to O1 and P1");
 
   // Write headers and data for highest rated player
-  sheet.getRange("P1").setValue("Highest rated player ever recorded");
-  sheet.getRange("Q1").setValue("Highest rating ever recorded");
-  sheet.getRange("P2").setValue(highestRatedPlayer);
-  sheet.getRange("Q2").setValue(highestRating);
-  logging("Highest rated player information written to P1:Q2");
+  sheet.getRange("S1").setValue("Highest rated player ever recorded");
+  sheet.getRange("T1").setValue("Highest rating ever recorded");
+  sheet.getRange("S2").setValue(highestRatedPlayer);
+  sheet.getRange("T2").setValue(highestRating);
+  logging("Highest rated player information written to S1:T2");
 
   logging("updateEloRatings function completed");
 }
@@ -187,21 +191,21 @@ Expected Table Locations
             Starting from E2 down to the last row with match data (e.g., E2: "Wyspy Echa", F2: "15", G2: "Kacperek", H2: "0", I2: "1", J2: "Leśnik").
 
     Updated Ratings Output Table
-        Location: M:N
+        Location: O:P
         Header:
-            M1: "Player"
-            N1: "Updated Rating"
+            O1: "Player"
+            P1: "Updated Rating"
         Output:
-            Starting from M2, with player names and their updated ratings populated based on processed match results.
+            Starting from O2, with player names and their updated ratings populated based on processed match results.
 
     Highest Rated Player Output
-        Location: P:Q
+        Location: S:T
         Header:
-            P1: "Highest rated player ever recorded"
-            Q1: "Highest rating ever recorded"
+            S1: "Highest rated player ever recorded"
+            T1: "Highest rating ever recorded"
         Data:
-            P2: Name of the player with the highest rating ever recorded
-            Q2: The highest rating ever recorded
+            S2: Name of the player with the highest rating ever recorded
+            T2: The highest rating ever recorded
 
 Script Functionality
 How the Script Works
@@ -231,17 +235,17 @@ How the Script Works
 
     Outputting Updated Ratings:
         After processing all matches, the script prepares an output array containing player names and their updated ratings.
-        This output is written to the range M2:N, dynamically adjusting to the number of players.
+        This output is written to the range O2:P, dynamically adjusting to the number of players.
 
     Setting Headers:
-        The headers for the output table are set in M1 and N1 to indicate "Player" and "Updated Rating," respectively.
+        The headers for the output table are set in O1 and P1 to indicate "Player" and "Updated Rating," respectively.
 
     Tracking Highest Rated Player:
         The script initializes variables to track the highest rated player and their rating.
         During the initial player ratings setup and throughout the match processing loop, 
         it continuously updates these variables if a higher rating is encountered.
         After processing all matches, it outputs the name of the player with the highest 
-        rating ever recorded and their rating to cells P2 and Q2, respectively.
+        rating ever recorded and their rating to cells S2 and T2, respectively.
 
         ===============+
 
@@ -253,14 +257,14 @@ How the Script Works
     Save the script with a name of your choice.
     Close the Apps Script editor.
     Back in your Google Sheets, run the script by going to Extensions > Macros > [your script name].
-    The updated ratings will be outputted in columns M and N.
-    The highest rated player ever recorded and their rating will be outputted in columns P and Q.
+    The updated ratings will be outputted in columns O and P.
+    The highest rated player ever recorded and their rating will be outputted in columns S and T.
 
 Notes
 
     Ensure there are no empty rows within your initial rankings or match results, as this may affect the script's ability to read data correctly.
     The K-factor can vary for each match, allowing for different levels of impact on ratings based on match significance.
-    The output table will overwrite any existing data starting from M2, so ensure that space is available before running the script.
+    The output table will overwrite any existing data starting from O2, so ensure that space is available before running the script.
     The highest rated player tracking considers both initial ratings and ratings achieved during match calculations.
 
 This documentation should provide a comprehensive guide for anyone using the script, including how it functions and how to set it up in Google Sheets. You can easily copy this text into a .txt file for future reference. If you have any further questions or need more adjustments, feel free to ask!
