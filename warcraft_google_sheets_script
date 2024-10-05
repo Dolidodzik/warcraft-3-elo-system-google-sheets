@@ -13,6 +13,10 @@ function updateEloRatings() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   logging("Active sheet retrieved: " + sheet.getName());
   
+  // Initialize variables for tracking highest rated player
+  var highestRatedPlayer = "";
+  var highestRating = 0;
+
   // Get the initial rankings dynamically (starting from A2:B and expanding to all filled rows)
   var lastRow = sheet.getLastRow(); // Get the last row with data on the sheet
   logging("Last row with data: " + lastRow);
@@ -45,9 +49,16 @@ function updateEloRatings() {
     var playerRating = rankings[i][1];
     playerRatings[playerName] = playerRating;
     logging("Added player to ratings: " + playerName + " - " + playerRating);
+
+    // Check if this player has the highest initial rating
+    if (playerRating > highestRating) {
+      highestRatedPlayer = playerName;
+      highestRating = playerRating;
+    }
   }
   logging("Initial player ratings: " + JSON.stringify(playerRatings));
-  
+  logging("Initial highest rated player: " + highestRatedPlayer + " with rating: " + highestRating);
+
   // Function to calculate expected score
   function expectedScore(ratingA, ratingB) {
     return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 600));
@@ -95,10 +106,21 @@ function updateEloRatings() {
     playerRatings[player1] = Math.round(newRating1);
     playerRatings[player2] = Math.round(newRating2);
     logging("Updated ratings - " + player1 + ": " + playerRatings[player1] + ", " + player2 + ": " + playerRatings[player2]);
+
+    // Check if either player has achieved a new highest rating
+    if (playerRatings[player1] > highestRating) {
+      highestRatedPlayer = player1;
+      highestRating = playerRatings[player1];
+    }
+    if (playerRatings[player2] > highestRating) {
+      highestRatedPlayer = player2;
+      highestRating = playerRatings[player2];
+    }
   }
 
   logging("========================================================");
   logging("All matches processed. Final player ratings: " + JSON.stringify(playerRatings));
+  logging("Highest rated player ever recorded: " + highestRatedPlayer + " with rating: " + highestRating);
 
   // Prepare output table starting from M2:N2
   var output = [];
@@ -125,6 +147,13 @@ function updateEloRatings() {
   sheet.getRange("M1").setValue("Nick");
   sheet.getRange("N1").setValue("Aktualny ranking");
   logging("Headers written to M1 and N1");
+
+  // Write headers and data for highest rated player
+  sheet.getRange("P1").setValue("Highest rated player ever recorded");
+  sheet.getRange("Q1").setValue("Highest rating ever recorded");
+  sheet.getRange("P2").setValue(highestRatedPlayer);
+  sheet.getRange("Q2").setValue(highestRating);
+  logging("Highest rated player information written to P1:Q2");
 
   logging("updateEloRatings function completed");
 }
@@ -165,6 +194,15 @@ Expected Table Locations
         Output:
             Starting from M2, with player names and their updated ratings populated based on processed match results.
 
+    Highest Rated Player Output
+        Location: P:Q
+        Header:
+            P1: "Highest rated player ever recorded"
+            Q1: "Highest rating ever recorded"
+        Data:
+            P2: Name of the player with the highest rating ever recorded
+            Q2: The highest rating ever recorded
+
 Script Functionality
 How the Script Works
 
@@ -198,6 +236,13 @@ How the Script Works
     Setting Headers:
         The headers for the output table are set in M1 and N1 to indicate "Player" and "Updated Rating," respectively.
 
+    Tracking Highest Rated Player:
+        The script initializes variables to track the highest rated player and their rating.
+        During the initial player ratings setup and throughout the match processing loop, 
+        it continuously updates these variables if a higher rating is encountered.
+        After processing all matches, it outputs the name of the player with the highest 
+        rating ever recorded and their rating to cells P2 and Q2, respectively.
+
         ===============+
 
         How to Use
@@ -209,12 +254,14 @@ How the Script Works
     Close the Apps Script editor.
     Back in your Google Sheets, run the script by going to Extensions > Macros > [your script name].
     The updated ratings will be outputted in columns M and N.
+    The highest rated player ever recorded and their rating will be outputted in columns P and Q.
 
 Notes
 
     Ensure there are no empty rows within your initial rankings or match results, as this may affect the script's ability to read data correctly.
     The K-factor can vary for each match, allowing for different levels of impact on ratings based on match significance.
     The output table will overwrite any existing data starting from M2, so ensure that space is available before running the script.
+    The highest rated player tracking considers both initial ratings and ratings achieved during match calculations.
 
 This documentation should provide a comprehensive guide for anyone using the script, including how it functions and how to set it up in Google Sheets. You can easily copy this text into a .txt file for future reference. If you have any further questions or need more adjustments, feel free to ask!
 

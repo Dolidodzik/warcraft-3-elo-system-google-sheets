@@ -1,5 +1,7 @@
 /*
 
+# May be outated, the documentation in comments below code files is probably more up to date!
+
 # Totally not ai genreated code and docs!
 
 ## google sheets apps script, chatgpt generated description below
